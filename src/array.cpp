@@ -16,9 +16,19 @@ void Array::append(AbstractNode* node)
     _data[_size++] = node;
 }
 
-AbstractNode* Array::operator[](const size_t index)
+AbstractNode& Array::operator[](const size_t index)
 {
-    return _data[index];
+    return *_data[index];
+}
+
+AbstractNode* operator+(const Array& array, const size_t index)
+{
+    return array._data[index];
+}
+
+AbstractNode& Array::top()
+{
+    return *_data[_size-1];
 }
 
 size_t Array::shrink()
@@ -29,8 +39,19 @@ size_t Array::shrink()
     return r;
 }
 
+size_t Array::size() const
+{
+    return _size;
+}
+
 void Array::grow()
 {
+    if(_capacity == 0)
+    {
+        _capacity = 8;
+        _data = (AbstractNode**)reallocarray(_data, _capacity, sizeof(AbstractNode*));
+        return;    
+    }
     _capacity = _capacity << 1;
     _data = (AbstractNode**)reallocarray(_data, _capacity, sizeof(AbstractNode*));
 }
