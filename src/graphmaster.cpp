@@ -1,7 +1,7 @@
 #include "graphmaster.h"
 #include <iostream>
 
-Graphmaster::Graphmaster() {}
+Graphmaster::Graphmaster(): _nbr_nodes(1) {}
 
 AbstractNode* Graphmaster::ask(const std::string& path)
 {
@@ -43,10 +43,36 @@ AbstractNode& Graphmaster::_walk_to(std::stringstream& ss, ANode& node)
         if(node[i].match(word))
             return _walk_to(ss, node[i]);
     }
-    ss.seekp(pos+1);
+    ss.seekp(pos);
     ss << word;
     ss.seekg(pos);
     return node;
+}
+
+void Graphmaster::learn(const std::string& path, const std::string& answer)
+{
+    std::stringstream ss(path);
+    ANode& node = _walk_to(ss, _root);
+    _nbr_nodes++;
+    _expend(ss, node).append_child(new AnswerNode(answer));
+}
+
+AbstractNode& Graphmaster::_expend(std::stringstream& ss, ANode& from)
+{
+    std::string word;
+    ss >> word;
+    std::cout << word << std::endl;
+    if(word!="")
+    {
+        _nbr_nodes++;
+        return _expend(ss, from.append_child(new Node(word)));
+    }
+    return from;
+}
+
+size_t Graphmaster::nbr_nodes() const
+{
+    return _nbr_nodes;
 }
 
 RootNode& Graphmaster::root()
