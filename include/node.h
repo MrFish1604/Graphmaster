@@ -4,6 +4,7 @@
 #include <string>
 #include <iterator>
 #include "array.h"
+#include <ostream>
 
 class Array;
 
@@ -58,5 +59,7 @@ class RootNode: public AbstractNode{
     std::string label() override;
     std::string str() override;
 };
+
+std::ostream& operator<<(std::ostream& stream, AbstractNode& node);
 
 #endif

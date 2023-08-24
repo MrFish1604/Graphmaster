@@ -14,23 +14,31 @@ AnswerNode& Graphmaster::ask(const std::string& path)
     return *rtn;
 }
 
+using namespace std;
 AnswerNode* Graphmaster::_ask(std::stringstream& ss, ANode& node, unsigned int score)
 {
     std::string word;
-    ss >> word;
+    int pos = ss.tellg();
+    cout << node << "\t";
+    if(!(ss >> word))
+    {
+        ss.clear();
+        cout << "\\EOF" << endl;
+        for(size_t i=0; i<node.nbr_children(); i++)
+        {
+            if(node[i].is_answer())
+            {
+                AnswerNode* answer = static_cast<AnswerNode*>(node+i);
+                answer->score() = score;
+                return answer;
+            }
+        }
+        return nullptr;
+    }
+    cout << word << endl;
     AnswerNode* best = nullptr;
     for(size_t i=0; i<node.nbr_children(); i++)
     {
-        if(word == "")
-        {
-            AnswerNode* answer = nullptr;
-            if(node[i].is_answer())
-            {
-                answer = static_cast<AnswerNode*>(node+i);
-                answer->score() = score;
-            }
-            return answer;
-        }
         if(node[i].match(word))
         {
             AnswerNode* r = _ask(ss, node[i], score);
@@ -39,7 +47,28 @@ AnswerNode* Graphmaster::_ask(std::stringstream& ss, ANode& node, unsigned int s
                 best = r;
             }
         }
+        if(node[i].label() == "*")
+        {
+            AnswerNode* r = _ask(ss, node[i], score+2);
+            if(r!=nullptr && (best==nullptr || *r < *best))
+            {
+                best = r;
+            }
+        }
+        if(node[i].label() == "**")
+        {
+            AnswerNode* r = _ask(ss, node[i], score+1);
+            if(r!=nullptr && (best==nullptr || *r < *best))
+            {
+                best = r;
+            }
+        }
     }
+    if(node.label() == "*" && best==nullptr)
+    {
+        best = _ask(ss, node, score+2);
+    }
+    ss.seekg(pos);
     return best;
 }
 

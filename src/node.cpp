@@ -131,3 +131,9 @@ bool operator<(const AnswerNode& node1, const AnswerNode& node2)
 {
     return node1._score < node2._score;
 }
+
+std::ostream& operator<<(std::ostream& stream, AbstractNode& node)
+{
+    stream << node.str();
+    return stream;
+}
