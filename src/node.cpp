@@ -16,10 +16,11 @@ AbstractNode* AbstractNode::add_child()
     return child;
 }
 
-void AbstractNode::append_child(AbstractNode* child)
+AbstractNode& AbstractNode::append_child(AbstractNode* child)
 {
     child->_parent = this;
     _children->append(child);
+    return _children->top();
 }
 
 size_t AbstractNode::nbr_children()
@@ -30,6 +31,16 @@ size_t AbstractNode::nbr_children()
 AbstractNode& AbstractNode::operator[](const size_t index)
 {
     return _children->operator[](index);
+}
+
+bool AbstractNode::match(std::string& word)
+{
+    return false && word!="";
+}
+
+bool AbstractNode::is_answer()
+{
+    return false;
 }
 
 size_t AbstractNode::shrink()
@@ -59,6 +70,11 @@ Node* Node::add_child(const std::string& label)
     return child;
 }
 
+bool Node::match(std::string& word)
+{
+    return word == _label;
+}
+
 AnswerNode::AnswerNode(const std::string& answer): _answer(answer) {}
 
 std::string AnswerNode::label()
@@ -69,4 +85,9 @@ std::string AnswerNode::label()
 std::string AnswerNode::answer()
 {
     return _answer;
+}
+
+bool AnswerNode::is_answer()
+{
+    return true;
 }
