@@ -3,14 +3,14 @@
 
 Graphmaster::Graphmaster() {}
 
-AbstractNode* Graphmaster::walk_to(const std::string& path)
+AbstractNode* Graphmaster::ask(const std::string& path)
 {
     std::stringstream ss(path);
     std::cout << path << std::endl;
-    return _walk_to(ss, _root);
+    return _ask(ss, _root);
 }
 
-AbstractNode* Graphmaster::_walk_to(std::stringstream& ss, ANode& node)
+AbstractNode* Graphmaster::_ask(std::stringstream& ss, ANode& node)
 {
     std::cout << node.label() << std::endl;
     if(node.is_answer())
@@ -23,12 +23,30 @@ AbstractNode* Graphmaster::_walk_to(std::stringstream& ss, ANode& node)
             return node + i;
         if(node[i].match(word))
         {
-            ANode* answer = _walk_to(ss, node[i]);
+            ANode* answer = _ask(ss, node[i]);
             if(answer != nullptr)
                 return answer;
         }
     }
     return nullptr;
+}
+
+AbstractNode& Graphmaster::_walk_to(std::stringstream& ss, ANode& node)
+{
+    std::string word;
+    long pos = ss.tellg();
+    ss >> word;
+    if(word == "")
+        return node;
+    for(size_t i=0; i<node.nbr_children(); i++)
+    {
+        if(node[i].match(word))
+            return _walk_to(ss, node[i]);
+    }
+    ss.seekp(pos+1);
+    ss << word;
+    ss.seekg(pos);
+    return node;
 }
 
 RootNode& Graphmaster::root()

@@ -7,10 +7,11 @@
 class Graphmaster{
 public:
     Graphmaster();
-    AbstractNode* walk_to(const std::string& path);
+    AbstractNode* ask(const std::string& path);
+    AbstractNode& _walk_to(std::stringstream& ss, ANode& node);
     RootNode& root();
 private:
-    AbstractNode* _walk_to(std::stringstream& ss, ANode& node);
+    AbstractNode* _ask(std::stringstream& ss, ANode& node);
     RootNode _root;
 
 };
