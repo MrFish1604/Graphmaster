@@ -18,6 +18,7 @@ public:
     virtual AbstractNode& append_child(AbstractNode* child);
     virtual bool match(std::string& word);
     virtual bool is_answer();
+    virtual std::string str();
     virtual ~AbstractNode();
 protected:
     AbstractNode* _parent;
@@ -31,6 +32,7 @@ class Node: public AbstractNode{
 public:
     Node(const std::string& label);
     std::string label() override;
+    std::string str() override;
     bool match(std::string& word) override;
     Node* add_child(const std::string& label);
 private:
@@ -41,6 +43,7 @@ class AnswerNode: public AbstractNode{
 public:
     AnswerNode(const std::string& answer);
     std::string label() override;
+    std::string str() override;
     bool is_answer() override;
     std::string answer();
 private:
@@ -48,6 +51,8 @@ private:
 };
 
 class RootNode: public AbstractNode{
+    std::string label() override;
+    std::string str() override;
 };
 
 #endif

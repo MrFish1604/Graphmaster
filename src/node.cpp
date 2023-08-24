@@ -91,3 +91,28 @@ bool AnswerNode::is_answer()
 {
     return true;
 }
+
+std::string RootNode::label()
+{
+    return "ROOT";
+}
+
+std::string AbstractNode::str()
+{
+    return "<AbstractNode>";
+}
+
+std::string Node::str()
+{
+    return "<" + _label + ">";
+}
+
+std::string AnswerNode::str()
+{
+    return "{" + _answer + "}";
+}
+
+std::string RootNode::str()
+{
+    return "[ROOT]";
+}

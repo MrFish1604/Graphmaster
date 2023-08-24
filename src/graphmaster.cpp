@@ -43,7 +43,7 @@ AbstractNode& Graphmaster::_walk_to(std::stringstream& ss, ANode& node)
         if(node[i].match(word))
             return _walk_to(ss, node[i]);
     }
-    ss.seekp(pos);
+    ss.seekp(pos+1);
     ss << word;
     ss.seekg(pos);
     return node;
@@ -51,7 +51,7 @@ AbstractNode& Graphmaster::_walk_to(std::stringstream& ss, ANode& node)
 
 void Graphmaster::learn(const std::string& path, const std::string& answer)
 {
-    std::stringstream ss(path);
+    std::stringstream ss(" "+path);
     ANode& node = _walk_to(ss, _root);
     _nbr_nodes++;
     _expend(ss, node).append_child(new AnswerNode(answer));
@@ -78,6 +78,23 @@ size_t Graphmaster::nbr_nodes() const
 RootNode& Graphmaster::root()
 {
     return _root;
+}
+
+std::string Graphmaster::str()
+{
+    return _str(_root);
+}
+
+std::string Graphmaster::_str(ANode& node, const size_t n)
+{
+    std::string rtn = "";
+    rtn.insert(0, n, '\t');
+    rtn +=  node.str() + "\n";
+    for(size_t i=0; i<node.nbr_children(); i++)
+    {
+        rtn += _str(node[i], n+1);
+    }
+    return rtn;
 }
 
 AbstractNode* operator+(const AbstractNode& node, const size_t index)
