@@ -59,7 +59,14 @@ Node* Node::add_child(const std::string& label)
     return child;
 }
 
-Node::~Node()
-{
+AnswerNode::AnswerNode(const std::string& answer): _answer(answer) {}
 
+std::string AnswerNode::label()
+{
+    return _answer;
+}
+
+std::string AnswerNode::answer()
+{
+    return _answer;
 }

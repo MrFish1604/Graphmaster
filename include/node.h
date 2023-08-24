@@ -26,9 +26,17 @@ public:
     Node(const std::string& label);
     std::string label() override;
     Node* add_child(const std::string& label);
-    ~Node() override;
 private:
     std::string _label;
+};
+
+class AnswerNode: public AbstractNode{
+public:
+    AnswerNode(const std::string& answer);
+    virtual std::string label() override;
+    std::string answer();
+private:
+    std::string _answer;
 };
 
 #endif
