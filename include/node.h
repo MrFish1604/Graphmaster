@@ -45,9 +45,13 @@ public:
     std::string label() override;
     std::string str() override;
     bool is_answer() override;
+    unsigned int& score();
     std::string answer();
 private:
     std::string _answer;
+    unsigned int _score;
+friend bool operator>(const AnswerNode& node1, const AnswerNode& node2);
+friend bool operator<(const AnswerNode& node1, const AnswerNode& node2);
 };
 
 class RootNode: public AbstractNode{

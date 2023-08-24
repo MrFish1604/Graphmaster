@@ -1,34 +1,46 @@
 #include "graphmaster.h"
 #include <iostream>
 
-Graphmaster::Graphmaster(): _nbr_nodes(1) {}
+Graphmaster::Graphmaster(): _nbr_nodes(1)
+{
+    learn("*", "Answer not found");
+}
 
-AbstractNode* Graphmaster::ask(const std::string& path)
+AnswerNode& Graphmaster::ask(const std::string& path)
 {
     std::stringstream ss(path);
     std::cout << path << std::endl;
-    return _ask(ss, _root);
+    AnswerNode* rtn = _ask(ss, _root, 0);
+    return *rtn;
 }
 
-AbstractNode* Graphmaster::_ask(std::stringstream& ss, ANode& node)
+AnswerNode* Graphmaster::_ask(std::stringstream& ss, ANode& node, unsigned int score)
 {
-    std::cout << node.label() << std::endl;
-    if(node.is_answer())
-        return &node;
     std::string word;
     ss >> word;
+    AnswerNode* best = nullptr;
     for(size_t i=0; i<node.nbr_children(); i++)
     {
-        if(node[i].is_answer())
-            return node + i;
+        if(word == "")
+        {
+            AnswerNode* answer = nullptr;
+            if(node[i].is_answer())
+            {
+                answer = static_cast<AnswerNode*>(node+i);
+                answer->score() = score;
+            }
+            return answer;
+        }
         if(node[i].match(word))
         {
-            ANode* answer = _ask(ss, node[i]);
-            if(answer != nullptr)
-                return answer;
+            AnswerNode* r = _ask(ss, node[i], score);
+            if(r!=nullptr && (best==nullptr || *r < *best))
+            {
+                best = r;
+            }
         }
     }
-    return nullptr;
+    return best;
 }
 
 AbstractNode& Graphmaster::_walk_to(std::stringstream& ss, ANode& node)

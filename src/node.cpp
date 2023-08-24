@@ -92,6 +92,11 @@ bool AnswerNode::is_answer()
     return true;
 }
 
+unsigned int& AnswerNode::score()
+{
+    return _score;
+}
+
 std::string RootNode::label()
 {
     return "ROOT";
@@ -115,4 +120,14 @@ std::string AnswerNode::str()
 std::string RootNode::str()
 {
     return "[ROOT]";
+}
+
+bool operator>(const AnswerNode& node1, const AnswerNode& node2)
+{
+    return node1._score > node2._score;
+}
+
+bool operator<(const AnswerNode& node1, const AnswerNode& node2)
+{
+    return node1._score < node2._score;
 }
