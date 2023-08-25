@@ -64,6 +64,16 @@ AnswerNode* Graphmaster::_ask(std::stringstream& ss, ANode& node, unsigned int s
                 best = r;
             }
         }
+        if(node[i].label()[0]=='$')
+        {
+            dict.add(node[i].label().substr(1), word);
+            AnswerNode* r = _ask(ss, node[i], score+1, dict);
+            dict.rmlast();
+            if(r!=nullptr && (best==nullptr || *r < *best))
+            {
+                best = r;
+            }
+        }
     }
     if(node.label() == "*" && best==nullptr)
     {
