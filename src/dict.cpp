@@ -198,5 +198,5 @@ std::string Dict<T>::str() const
 template<typename T>
 T& Dict<T>::last_star()
 {
-    return operator[](std::to_string(_next));
+    return operator[](std::to_string(_next-1));
 }
