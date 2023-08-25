@@ -101,9 +101,21 @@ AbstractNode& Graphmaster::_expend(std::stringstream& ss, ANode& from)
     if(word!="")
     {
         _nbr_nodes++;
+        if(contains(word, '|'))
+            return _expend(ss, from.append_child(new OrNode(word)));
         return _expend(ss, from.append_child(new Node(word)));
     }
     return from;
+}
+
+bool contains(std::string& str, char c)
+{
+    if(str[0]==c)
+        return true;
+    for(size_t i=1; i<str.size(); i++)
+        if(str[i-1]!='\\' && str[i]==c)
+            return true;
+    return false;
 }
 
 size_t Graphmaster::nbr_nodes() const

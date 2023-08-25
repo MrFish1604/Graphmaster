@@ -27,5 +27,6 @@ private:
 };
 
 std::string trim(std::string& str);
+bool contains(std::string& str, char c);
 
 #endif

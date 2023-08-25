@@ -1,5 +1,6 @@
 #include "node.h"
 #include <iostream>
+#include <cstdlib>
 
 AbstractNode::AbstractNode(): _parent(nullptr), _children(new Array(0)) {}
 
@@ -141,4 +142,72 @@ std::ostream& operator<<(std::ostream& stream, AbstractNode& node)
 AbstractNode* operator+(const AbstractNode& node, const size_t index)
 {
     return *node._children + index;
+}
+
+char* copystr(std::string str)
+{
+    char* cstr = (char*) calloc(str.length()+1, sizeof(char));
+    size_t i;
+    for(i=0; i<str.length(); i++)
+        cstr[i] = str[i];
+    cstr[i] = '\0';
+    return cstr;
+}
+
+OrNode::OrNode(const std::string& label)
+{
+    int s = 8;
+    _labels = (char**) calloc(s, sizeof(char*));
+    int i = 0;
+    int k = 0;
+    size_t l;
+    for(l=0; l<label.length(); l++)
+    {
+        if(label[l]=='|')
+        {
+            if(i==s)
+                _labels = (char**) reallocarray(_labels, s*=2, sizeof(char*));
+            std::cout << "OrNode: " << label.substr(k, l-k) << std::endl;
+            _labels[i++] = copystr(label.substr(k, l-k));
+            k = l;
+        }
+    }
+    if(i==s)
+        _labels = (char**) reallocarray(_labels, s++, sizeof(char*));
+    _labels[i++] = copystr(label.substr(k, l-k+1));
+    _nbr_labels = i;
+    if(i!=s)
+        _labels = (char**) reallocarray(_labels, i, sizeof(char*));
+}
+
+std::string OrNode::label()
+{
+    std::string l = std::string(_labels[0]);
+    for(int i=1; i<_nbr_labels; i++)
+    {
+        l += "|" + std::string(_labels[i]);
+    }
+    return l;
+}
+
+std::string OrNode::str()
+{
+    return "||" + label() + "||";
+}
+
+bool OrNode::match(std::string& word)
+{
+    for(int i=0; i<_nbr_labels; i++)
+    {
+        if(word == _labels[i])
+            return true;
+    }
+    return false;
+}
+
+OrNode::~OrNode()
+{
+    for(int i=0; i<_nbr_labels; i++)
+        free(_labels[i]);
+    free(_labels);
 }

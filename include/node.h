@@ -40,6 +40,19 @@ private:
     std::string _label;
 };
 
+class OrNode: public AbstractNode{
+public:
+    OrNode(const std::string& label);
+    std::string label() override;
+    std::string str() override;
+    bool match(std::string& word) override;
+    ~OrNode();
+private:
+    char** _labels;
+    int _nbr_labels;
+
+};
+
 class AnswerNode: public AbstractNode{
 public:
     AnswerNode(const std::string& answer);
