@@ -10,11 +10,11 @@ Graphmaster::Graphmaster(): _nbr_nodes(1)
 AnswerNode& Graphmaster::ask(const std::string& path)
 {
     std::stringstream ss(path);
-    AnswerNode* rtn = _ask(ss, _root, 0);
+    AnswerNode* rtn = _ask(ss, _root, 0, Dict<std::string>());
     return *rtn;
 }
 
-AnswerNode* Graphmaster::_ask(std::stringstream& ss, ANode& node, unsigned int score)
+AnswerNode* Graphmaster::_ask(std::stringstream& ss, ANode& node, unsigned int score, Dict<std::string> dict)
 {
     std::string word;
     int pos = ss.tellg();
@@ -27,6 +27,7 @@ AnswerNode* Graphmaster::_ask(std::stringstream& ss, ANode& node, unsigned int s
             {
                 AnswerNode* answer = static_cast<AnswerNode*>(node+i);
                 answer->score() = score;
+                answer->collected() = dict;
                 return answer;
             }
         }
@@ -37,7 +38,7 @@ AnswerNode* Graphmaster::_ask(std::stringstream& ss, ANode& node, unsigned int s
     {
         if(node[i].match(word))
         {
-            AnswerNode* r = _ask(ss, node[i], score);
+            AnswerNode* r = _ask(ss, node[i], score, dict);
             if(r!=nullptr && (best==nullptr || *r < *best))
             {
                 best = r;
@@ -45,7 +46,9 @@ AnswerNode* Graphmaster::_ask(std::stringstream& ss, ANode& node, unsigned int s
         }
         if(node[i].label() == "*")
         {
-            AnswerNode* r = _ask(ss, node[i], score+2);
+            dict.add("*", word);
+            AnswerNode* r = _ask(ss, node[i], score+2, dict);
+            dict.rmlast();
             if(r!=nullptr && (best==nullptr || *r < *best))
             {
                 best = r;
@@ -53,7 +56,9 @@ AnswerNode* Graphmaster::_ask(std::stringstream& ss, ANode& node, unsigned int s
         }
         if(node[i].label() == "**")
         {
-            AnswerNode* r = _ask(ss, node[i], score+1);
+            dict.add("**", word);
+            AnswerNode* r = _ask(ss, node[i], score+1, dict);
+            dict.rmlast();
             if(r!=nullptr && (best==nullptr || *r < *best))
             {
                 best = r;
@@ -62,7 +67,9 @@ AnswerNode* Graphmaster::_ask(std::stringstream& ss, ANode& node, unsigned int s
     }
     if(node.label() == "*" && best==nullptr)
     {
-        best = _ask(ss, node, score+2);
+        dict.last_star() += " " + word;
+        best = _ask(ss, node, score+2, dict);
+        dict.rmlast();
     }
     ss.seekg(pos);
     return best;

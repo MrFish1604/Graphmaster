@@ -5,6 +5,7 @@
 #include <iterator>
 #include "array.h"
 #include <ostream>
+#include "dict.h"
 
 class Array;
 
@@ -59,11 +60,13 @@ public:
     std::string label() override;
     std::string str() override;
     bool is_answer() override;
+    Dict<std::string>& collected();
     unsigned int& score();
     std::string answer();
 private:
     std::string _answer;
     unsigned int _score;
+    Dict<std::string> _collected;
 friend bool operator>(const AnswerNode& node1, const AnswerNode& node2);
 friend bool operator<(const AnswerNode& node1, const AnswerNode& node2);
 };

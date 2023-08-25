@@ -3,6 +3,7 @@
 
 #include "node.h"
 #include <sstream>
+#include "dict.h"
 
 #define LOWER(c) (c>='A' && c<='Z' ? c+32 : c)
 
@@ -18,7 +19,7 @@ public:
     RootNode& root();
 private:
     int _shrink(AbstractNode& node);
-    AnswerNode* _ask(std::stringstream& ss, ANode& node, unsigned int score);
+    AnswerNode* _ask(std::stringstream& ss, ANode& node, unsigned int score, Dict<std::string> dict);
     AbstractNode& _walk_to(std::stringstream& ss, ANode& node);
     AbstractNode& _expend(std::stringstream& ss, ANode& from);
     std::string _str(ANode& node, const size_t n=0);

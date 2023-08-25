@@ -210,3 +210,8 @@ OrNode::~OrNode()
         free(_labels[i]);
     free(_labels);
 }
+
+Dict<std::string>& AnswerNode::collected()
+{
+    return _collected;
+}
