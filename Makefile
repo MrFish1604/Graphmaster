@@ -2,7 +2,7 @@ CC=g++
 CFLAGS=-Wall -Wextra -pedantic -fdiagnostics-color=always -O0 -g3 -fsanitize=address 
 CFLAGS+=-Iinclude 
 
-test: bin/test.o bin/graphmaster.o bin/node.o bin/array.o
+test: bin/test.o bin/graphmaster.o bin/node.o bin/array.o bin/dict.o
 	$(CC) $(CFLAGS) $^ -o $@
 
 bin/graphmaster.o: bin
@@ -22,3 +22,6 @@ bin/array.o: bin
 
 clean:
 	rm -rf bin test
+
+bin/dict.o: bin 
+	$(CC) $(CFLAGS) -c src/dict.cpp -o $@

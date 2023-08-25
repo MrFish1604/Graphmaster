@@ -167,7 +167,6 @@ OrNode::OrNode(const std::string& label)
         {
             if(i==s)
                 _labels = (char**) reallocarray(_labels, s*=2, sizeof(char*));
-            std::cout << "OrNode: " << label.substr(k, l-k) << std::endl;
             _labels[i++] = copystr(label.substr(k, l-k));
             k = l;
         }
