@@ -137,3 +137,8 @@ std::ostream& operator<<(std::ostream& stream, AbstractNode& node)
     stream << node.str();
     return stream;
 }
+
+AbstractNode* operator+(const AbstractNode& node, const size_t index)
+{
+    return *node._children + index;
+}

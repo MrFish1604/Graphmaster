@@ -1,5 +1,6 @@
 #include "graphmaster.h"
 #include <iostream>
+#include <fstream>
 
 Graphmaster::Graphmaster(): _nbr_nodes(1)
 {
@@ -9,21 +10,17 @@ Graphmaster::Graphmaster(): _nbr_nodes(1)
 AnswerNode& Graphmaster::ask(const std::string& path)
 {
     std::stringstream ss(path);
-    std::cout << path << std::endl;
     AnswerNode* rtn = _ask(ss, _root, 0);
     return *rtn;
 }
 
-using namespace std;
 AnswerNode* Graphmaster::_ask(std::stringstream& ss, ANode& node, unsigned int score)
 {
     std::string word;
     int pos = ss.tellg();
-    cout << node << "\t";
     if(!(ss >> word))
     {
         ss.clear();
-        cout << "\\EOF" << endl;
         for(size_t i=0; i<node.nbr_children(); i++)
         {
             if(node[i].is_answer())
@@ -35,7 +32,6 @@ AnswerNode* Graphmaster::_ask(std::stringstream& ss, ANode& node, unsigned int s
         }
         return nullptr;
     }
-    cout << word << endl;
     AnswerNode* best = nullptr;
     for(size_t i=0; i<node.nbr_children(); i++)
     {
@@ -102,7 +98,6 @@ AbstractNode& Graphmaster::_expend(std::stringstream& ss, ANode& from)
 {
     std::string word;
     ss >> word;
-    std::cout << word << std::endl;
     if(word!="")
     {
         _nbr_nodes++;
@@ -138,7 +133,104 @@ std::string Graphmaster::_str(ANode& node, const size_t n)
     return rtn;
 }
 
-AbstractNode* operator+(const AbstractNode& node, const size_t index)
+int Graphmaster::shrink()
 {
-    return *node._children + index;
+    return _shrink(_root);
+}
+
+int Graphmaster::_shrink(AbstractNode& node)
+{
+    int sum = 0;
+    for(size_t i=0; i<node.nbr_children(); i++)
+        sum += _shrink(node[i]);
+    return sum + node.shrink();
+}
+
+#define KW(x) (c==x && (buff=="" || buff[buff.size()-1]!='\\'))
+int Graphmaster::parse(const std::string& filename)
+{
+    std::ifstream file(filename);
+    if(!file)
+        return -1;
+    
+    size_t rtn = _nbr_nodes;
+    char c;
+    std::string buff = "";
+    std::string prompt;
+    std::string answer;
+    int w = 0;
+    int line = 0;
+    while(file.get(c))
+    {
+        if(c=='\n')
+        {
+            line++;
+            continue;
+        }
+        if(c=='\t' || (buff=="" && c==' '))
+            continue;
+        if(c=='#')
+        {
+            while(file.get(c) && c!='\n');
+            line++;
+            continue;
+        }
+        switch(w)
+        {
+            case 0:
+                if(KW('{'))
+                {
+                    prompt = buff;
+                    w = 1;
+                    buff = "";
+                    continue;
+                }
+                break;
+            case 1:
+                if(KW('('))
+                {
+                    if(buff=="reply")
+                        w = 2;
+                    else
+                        return -line;
+                    buff = "";
+                    continue;
+                }
+                if(KW('}'))
+                {
+                    if(prompt=="" || answer=="")
+                        return -line;
+                    learn(prompt, answer);
+                    buff = "";
+                    prompt = "";
+                    answer = "";
+                    w = 0;
+                    continue;
+                }
+                break;
+            case 2:
+                if(KW(')'))
+                {
+                    answer = buff;
+                    buff = "";
+                    w = 1;
+                    continue;
+                }
+                break;
+
+        }
+        buff += LOWER(c);
+    }
+    return _nbr_nodes - rtn;
+}
+
+std::string trim(std::string& str)
+{
+    size_t i=0;
+    while(str[i]==' ' || str[i]=='\t' || str[i]=='\n')
+        i++;
+    size_t j=str.size()-1;
+    while(str[j]==' ' || str[j]=='\t' || str[j]=='\n')
+        j--;
+    return str.substr(i, j-i+1);
 }
