@@ -1,9 +1,8 @@
 #include "dict.h"
 #include <sstream>
-#include <iostream>
 
 template<typename T>
-Dict<T>::Dict(): _next(0), _data(nullptr), _last(nullptr) {}
+Dict<T>::Dict(): _next(1), _data(nullptr), _last(nullptr) {}
 
 template<typename T>
 Dict<T>::Dict(const Dict<T>& dict): _next(dict._next)
@@ -42,7 +41,7 @@ void Dict<T>::clear()
         delete tmp;
     }
     _last = nullptr;
-    _next = 0;
+    _next = 1;
 }
 
 template<typename T>
@@ -106,9 +105,10 @@ void Dict<T>::rm(std::string label)
 template<typename T>
 void Dict<T>::rmlast()
 {
-    std::cout << "RM: " << _last->label << " : " << _last->data << std::endl;
     if(_data==_last)
     {
+        if(_next!=1)
+            _next = 1;
         delete _data;
         _data = nullptr;
         _last = nullptr;
