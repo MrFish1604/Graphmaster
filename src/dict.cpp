@@ -1,6 +1,5 @@
 #include "dict.h"
 #include <sstream>
-#include <iostream>
 
 template<typename T>
 Dict<T>::Dict(): _next(1), _nextg(0), _data(nullptr), _last(nullptr) {}
@@ -162,7 +161,6 @@ template<typename T>
 T& Dict<T>::get_star()
 {
     _nextg = _nextg%(_next+1) + 1;
-    std::cout << "nextg=" << _nextg << std::endl;
     return operator[](std::to_string(_nextg));
 }
 

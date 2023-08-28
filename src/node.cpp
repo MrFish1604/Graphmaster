@@ -1,5 +1,4 @@
 #include "node.h"
-#include <iostream>
 #include <cstdlib>
 #include <sstream>
 

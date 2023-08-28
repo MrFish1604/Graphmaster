@@ -1,6 +1,9 @@
 CC=g++
-CFLAGS=-Wall -Wextra -pedantic -fdiagnostics-color=always -O0 -g3 -fsanitize=address 
+CFLAGS= -fPIC -Wall -Wextra -pedantic -fdiagnostics-color=always -O0 -g3 -fsanitize=address 
 CFLAGS+=-Iinclude 
+
+bin/libgraphmaster.so: bin/graphmaster.o bin/node.o bin/array.o bin/dict.o
+	g++ --shared $^ -o $@
 
 test: bin/test.o bin/graphmaster.o bin/node.o bin/array.o bin/dict.o
 	$(CC) $(CFLAGS) $^ -o $@
@@ -19,6 +22,15 @@ bin/test.o: bin
 
 bin/array.o: bin 
 	$(CC) $(CFLAGS) -c src/array.cpp -o $@
+
+lib: bin/libgraphmaster.so
+
+install: bin/libgraphmaster.so /usr/include/libgraphmaster
+	@cp -v bin/libgraphmaster.so /usr/lib/libgraphmaster.so
+	@cp -v include/* /usr/include/libgraphmaster/
+
+/usr/include/libgraphmaster:
+	mkdir /usr/include/libgraphmaster
 
 clean:
 	rm -rf bin test

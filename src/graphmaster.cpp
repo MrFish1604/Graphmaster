@@ -1,5 +1,4 @@
 #include "graphmaster.h"
-#include <iostream>
 #include <fstream>
 
 Graphmaster::Graphmaster(): _nbr_nodes(1)
