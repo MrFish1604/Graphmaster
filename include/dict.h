@@ -23,11 +23,13 @@ public:
     T& add(std::string label, T data);
     std::string str() const;
     T& operator[](const std::string& label);
+    T get(const std::string& label, const T& def);
     bool exists(const std::string& label);
     T& last_star();
+    T& get_star();
     ~Dict();
 private:
-    int _next;
+    int _next, _nextg;
     struct DictWrapper<T>* _data;
     struct DictWrapper<T>* _last;
 };

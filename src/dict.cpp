@@ -1,8 +1,9 @@
 #include "dict.h"
 #include <sstream>
+#include <iostream>
 
 template<typename T>
-Dict<T>::Dict(): _next(1), _data(nullptr), _last(nullptr) {}
+Dict<T>::Dict(): _next(1), _nextg(0), _data(nullptr), _last(nullptr) {}
 
 template<typename T>
 Dict<T>::Dict(const Dict<T>& dict): _next(dict._next)
@@ -142,6 +143,27 @@ T& Dict<T>::add(std::string label, T data)
     _last->data = data;
     _last->label = label;
     return _last->data;
+}
+
+template<typename T>
+T Dict<T>::get(const std::string& label, const T& def)
+{
+    DictWrapper<T>* tmp = _data;
+    while(tmp!=nullptr)
+    {
+        if(tmp->label == label)
+            return tmp->data;
+        tmp = tmp->next;
+    }
+    return def;
+}
+
+template<typename T>
+T& Dict<T>::get_star()
+{
+    _nextg = _nextg%(_next+1) + 1;
+    std::cout << "nextg=" << _nextg << std::endl;
+    return operator[](std::to_string(_nextg));
 }
 
 template<typename T>

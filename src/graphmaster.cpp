@@ -4,7 +4,7 @@
 
 Graphmaster::Graphmaster(): _nbr_nodes(1)
 {
-    learn("*", "Answer not found");
+    
 }
 
 AnswerNode& Graphmaster::ask(const std::string& path)
@@ -47,7 +47,7 @@ AnswerNode* Graphmaster::_ask(std::stringstream& ss, ANode& node, unsigned int s
         if(node[i].label() == "*")
         {
             dict.add("*", word);
-            AnswerNode* r = _ask(ss, node[i], score+2, dict);
+            AnswerNode* r = _ask(ss, node[i], score+3, dict);
             dict.rmlast();
             if(r!=nullptr && (best==nullptr || *r < *best))
             {
@@ -57,7 +57,7 @@ AnswerNode* Graphmaster::_ask(std::stringstream& ss, ANode& node, unsigned int s
         if(node[i].label() == "**")
         {
             dict.add("**", word);
-            AnswerNode* r = _ask(ss, node[i], score+1, dict);
+            AnswerNode* r = _ask(ss, node[i], score+2, dict);
             dict.rmlast();
             if(r!=nullptr && (best==nullptr || *r < *best))
             {
@@ -78,7 +78,7 @@ AnswerNode* Graphmaster::_ask(std::stringstream& ss, ANode& node, unsigned int s
     if(node.label() == "*" && best==nullptr)
     {
         dict.last_star() += " " + word;
-        best = _ask(ss, node, score+2, dict);
+        best = _ask(ss, node, score+3, dict);
         dict.rmlast();
     }
     ss.seekg(pos);

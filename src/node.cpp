@@ -1,6 +1,7 @@
 #include "node.h"
 #include <iostream>
 #include <cstdlib>
+#include <sstream>
 
 AbstractNode::AbstractNode(): _parent(nullptr), _children(new Array(0)) {}
 
@@ -85,7 +86,23 @@ std::string AnswerNode::label()
 
 std::string AnswerNode::answer()
 {
-    return _answer;
+    std::stringstream label;
+    label << _answer << ' ';
+    std::stringstream answer;
+    std::string word;
+    label >> word;
+    while(label.good())
+    {
+        if(word[0] == '*')
+            answer << _collected.get_star();
+        else if(word[0] == '$')
+            answer << _collected[word.substr(1, word.length()-1)];
+        else
+            answer << word;
+        answer << ' ';
+        label >> word;
+    }
+    return answer.str();
 }
 
 bool AnswerNode::is_answer()
