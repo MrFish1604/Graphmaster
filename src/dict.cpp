@@ -42,6 +42,7 @@ void Dict<T>::clear()
     }
     _last = nullptr;
     _next = 1;
+    _nextg = 0;
 }
 
 template<typename T>
@@ -51,7 +52,7 @@ void Dict<T>::operator=(const Dict<T>& dict)
     DictWrapper<T>* tmp = dict._data;
     while(tmp!=nullptr)
     {
-        operator[](tmp->label) = tmp->data;
+        add(tmp->label, tmp->data);
         tmp = tmp->next;
     }
 

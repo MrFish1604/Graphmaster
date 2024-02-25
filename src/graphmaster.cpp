@@ -6,7 +6,20 @@ Graphmaster::Graphmaster(): _nbr_nodes(1)
     
 }
 
-AnswerNode& Graphmaster::ask(const std::string& path)
+std::string Graphmaster::ask(const std::string& path)
+{
+    AnswerNode& an = get_answer(path);
+    return an.answer();
+}
+
+std::string Graphmaster::ask(const std::string& path, int& score)
+{
+    AnswerNode& an = get_answer(path);
+    score = an.score();
+    return an.answer();
+}
+
+AnswerNode& Graphmaster::get_answer(const std::string& path)
 {
     std::stringstream ss(path);
     AnswerNode* rtn = _ask(ss, _root, 0, Dict<std::string>());

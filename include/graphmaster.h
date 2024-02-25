@@ -10,7 +10,9 @@
 class Graphmaster{
 public:
     Graphmaster();
-    AnswerNode& ask(const std::string& path);
+    AnswerNode& get_answer(const std::string& path);
+    std::string ask(const std::string& path);
+    std::string ask(const std::string& path, int& score);
     void learn(const std::string& path, const std::string& answer);
     size_t nbr_nodes() const;
     std::string str();
