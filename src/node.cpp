@@ -76,7 +76,9 @@ bool Node::match(std::string& word)
     return word == _label;
 }
 
-AnswerNode::AnswerNode(const std::string& answer): _answer(answer) {}
+AnswerNode::AnswerNode(const std::string& answer): _answer(answer), _root(nullptr), _time_limit(0) {}
+
+AnswerNode::AnswerNode(const std::string& answer, const int tl): _answer(answer), _root(nullptr), _time_limit(tl) {}
 
 std::string AnswerNode::label()
 {
@@ -102,6 +104,11 @@ std::string AnswerNode::answer()
         label >> word;
     }
     return answer.str();
+}
+
+int AnswerNode::time_limit()
+{
+    return _time_limit;
 }
 
 bool AnswerNode::is_answer()

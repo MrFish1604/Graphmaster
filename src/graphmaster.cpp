@@ -1,10 +1,8 @@
 #include "graphmaster.h"
 #include <fstream>
+#include <ctime>
 
-Graphmaster::Graphmaster(): _nbr_nodes(1)
-{
-    
-}
+Graphmaster::Graphmaster(): _last_answer(nullptr), _nbr_nodes(1) {}
 
 std::string Graphmaster::ask(const std::string& path)
 {
@@ -21,8 +19,11 @@ std::string Graphmaster::ask(const std::string& path, int& score)
 
 AnswerNode& Graphmaster::get_answer(const std::string& path)
 {
+    RootNode& root = _last_answer!=nullptr && _last_answer->_root!=nullptr && std::time(nullptr)-_last_answer_epoch<_last_answer->time_limit() ? *(_last_answer->_root) : _root;
     std::stringstream ss(path);
-    AnswerNode* rtn = _ask(ss, _root, 0, Dict<std::string>());
+    AnswerNode* rtn = _ask(ss, root, 0, Dict<std::string>());
+    _last_answer = rtn;
+    _last_answer_epoch = std::time(nullptr);
     return *rtn;
 }
 
@@ -117,8 +118,13 @@ AbstractNode& Graphmaster::_walk_to(std::stringstream& ss, ANode& node)
 
 void Graphmaster::learn(const std::string& path, const std::string& answer)
 {
+    learn(path, answer, _root);
+}
+
+void Graphmaster::learn(const std::string& path, const std::string& answer, RootNode& root)
+{
     std::stringstream ss(" "+path);
-    ANode& node = _walk_to(ss, _root);
+    ANode& node = _walk_to(ss, root);
     _nbr_nodes++;
     _expend(ss, node).append_child(new AnswerNode(answer));
 }

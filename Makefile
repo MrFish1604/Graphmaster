@@ -18,7 +18,7 @@ bin/node.o: bin
 	$(CC) $(CFLAGS) -c src/node.cpp -o $@
 
 bin/test.o: bin 
-	$(CC) $(CFLAGS) -c src/test.cpp -o $@
+	$(CC) -DTEST $(CFLAGS) -c src/test.cpp -o $@
 
 bin/array.o: bin 
 	$(CC) $(CFLAGS) -c src/array.cpp -o $@

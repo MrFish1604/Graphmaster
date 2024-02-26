@@ -30,6 +30,11 @@ friend AbstractNode* operator+(const AbstractNode& node, const size_t index);
 };
 typedef AbstractNode ANode;
 
+class RootNode: public AbstractNode{
+    std::string label() override;
+    std::string str() override;
+};
+
 class Node: public AbstractNode{
 public:
     Node(const std::string& label);
@@ -57,23 +62,25 @@ private:
 class AnswerNode: public AbstractNode{
 public:
     AnswerNode(const std::string& answer);
+    AnswerNode(const std::string& answer, const int tl);
     std::string label() override;
     std::string str() override;
     bool is_answer() override;
     Dict<std::string>& collected();
     unsigned int& score();
     std::string answer();
+    int time_limit();
+#ifndef TEST
 private:
+#endif
     std::string _answer;
     unsigned int _score;
     Dict<std::string> _collected;
+    RootNode* _root;
+    int _time_limit;
 friend bool operator>(const AnswerNode& node1, const AnswerNode& node2);
 friend bool operator<(const AnswerNode& node1, const AnswerNode& node2);
-};
-
-class RootNode: public AbstractNode{
-    std::string label() override;
-    std::string str() override;
+friend class Graphmaster;
 };
 
 std::ostream& operator<<(std::ostream& stream, AbstractNode& node);

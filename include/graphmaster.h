@@ -4,6 +4,7 @@
 #include "node.h"
 #include <sstream>
 #include "dict.h"
+#include <ctime>
 
 #define LOWER(c) (c>='A' && c<='Z' ? c+32 : c)
 
@@ -14,6 +15,7 @@ public:
     std::string ask(const std::string& path);
     std::string ask(const std::string& path, int& score);
     void learn(const std::string& path, const std::string& answer);
+    void learn(const std::string& path, const std::string& answer, RootNode& root);
     size_t nbr_nodes() const;
     std::string str();
     int parse(const std::string& filename);
@@ -26,6 +28,8 @@ private:
     AbstractNode& _expend(std::stringstream& ss, ANode& from);
     std::string _str(ANode& node, const size_t n=0);
     RootNode _root;
+    AnswerNode* _last_answer;
+    std::time_t _last_answer_epoch;
     size_t _nbr_nodes;
 };
 
