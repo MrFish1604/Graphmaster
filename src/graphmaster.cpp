@@ -126,10 +126,15 @@ void Graphmaster::learn(const std::string& path, const std::string& answer)
 
 void Graphmaster::learn(const std::string& path, const std::string& answer, RootNode& root)
 {
+    learn(path, new AnswerNode(answer), root);
+}
+
+void Graphmaster::learn(const std::string& path, AnswerNode* answer_node, RootNode& root)
+{
     std::stringstream ss(" "+path);
     ANode& node = _walk_to(ss, root);
     _nbr_nodes++;
-    _expend(ss, node).append_child(new AnswerNode(answer));
+    _expend(ss, node).append_child(answer_node);
 }
 
 AbstractNode& Graphmaster::_expend(std::stringstream& ss, ANode& from)
@@ -332,4 +337,110 @@ std::stringstream lexer(const std::string& filename)
     }
     file.close();
     return ss;
+}
+
+#include <iostream>
+std::string peek_token(std::stringstream& ss)
+{
+    if(ss.eof())
+        throw std::runtime_error("Parser error: unexpected end of file. (peek_token)");
+    std::string token;
+    long pos = ss.tellg();
+    ss >> token;
+    ss.seekg(pos);
+    return token;
+}
+
+void parser(Graphmaster& gm, const std::string& filename)
+{
+    std::stringstream ss = lexer(filename);
+    while(ss.good() && !peek_token(ss).empty())
+    {
+        parse_rule(gm, ss, gm._root);
+        std::cerr << "-------------------\n";
+    }
+}
+
+void parse_rule(Graphmaster& gm, std::stringstream& ss, RootNode& root)
+{
+    std::cerr << "Parsing rule\n";
+    std::string token;
+    token = consume(ss);
+    std::string prompt = "";
+    while(token != "{")
+    {
+        prompt += token + " ";
+        token = consume(ss);
+    }
+    if(prompt == "")
+        throw std::runtime_error("Parser error: expected a prompt before '{', got nothing.");
+    AnswerNode* an = parse_answer(gm, ss);
+    gm.learn(prompt, an, root);
+}
+
+
+AnswerNode* parse_answer(Graphmaster& gm, std::stringstream& ss)
+{
+    std::cerr << "Parsing answer\n";
+    std::string token;
+    AnswerNode* an = new AnswerNode("");
+    while((token = peek_token(ss)) != "}")
+    {
+        if(token == REPLY)
+        {
+            consume(ss);
+            token = consume(ss);
+            if(token!="(")
+                throw std::runtime_error("Parser error: expected '(' after 'reply', got '"+ token + "'.");
+            token = consume(ss);
+            an->_answer += token;
+            while(peek_token(ss) != ")")
+            {
+                token = consume(ss);
+                an->_answer += " " + token;
+            }
+            token = consume(ss);
+            continue;
+        }
+        if(token == TTL)
+        {
+            consume(ss);
+            token = consume(ss);
+            if(token!="(")
+                throw std::runtime_error("Parser error: expected '(' after 'ttl', got '"+ token + "'.");
+            token = consume(ss);
+            try{
+                an->_time_limit = std::stoi(token);
+                token = consume(ss);
+                if(token!=")")
+                    throw std::runtime_error("Parser error: expected ')' after '"+ std::to_string(an->_time_limit) + "', got '"+ token + "'.");
+            }
+            catch(std::invalid_argument& e)
+            {
+                throw std::runtime_error("Parser error: expected an integer after 'ttl', got '"+ token + "'.");
+            }
+            continue;
+        }
+        an->_root = new RootNode();
+        parse_rule(gm, ss, *(an->_root));
+    }
+    consume(ss);
+    return an;
+}
+
+int ij = 0;
+std::string consume(std::stringstream& ss)
+{
+    std::cerr << (ij++) << "  ";
+    if(ss.eof())
+        throw std::runtime_error("Parser error: unexpected end of file. (consume)");
+    std::string token;
+    ss >> token;
+    std::cerr << '\t' << token << "  ";
+    for(int i=0; i<token.size(); i++)
+    {
+        std::cerr << (int)token[i] << " ";
+    }
+    std::cerr << std::endl;
+    return token;
 }

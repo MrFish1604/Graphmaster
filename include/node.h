@@ -8,6 +8,7 @@
 #include "dict.h"
 
 class Array;
+class Graphmaster;
 
 class AbstractNode{
 public:    
@@ -70,6 +71,7 @@ public:
     unsigned int& score();
     std::string answer();
     int time_limit();
+    ~AnswerNode();
 #ifndef TEST
 private:
 #endif
@@ -81,6 +83,7 @@ private:
 friend bool operator>(const AnswerNode& node1, const AnswerNode& node2);
 friend bool operator<(const AnswerNode& node1, const AnswerNode& node2);
 friend class Graphmaster;
+friend AnswerNode* parse_answer(Graphmaster& gm, std::stringstream& ss);
 };
 
 std::ostream& operator<<(std::ostream& stream, AbstractNode& node);

@@ -6,6 +6,10 @@
 #include "dict.h"
 #include <ctime>
 
+#define REPLY "reply"
+#define EXEC "exec"
+#define TTL "ttl"
+
 #define LOWER(c) (c>='A' && c<='Z' ? c+32 : c)
 
 class Graphmaster{
@@ -16,6 +20,7 @@ public:
     std::string ask(const std::string& path, int& score);
     void learn(const std::string& path, const std::string& answer);
     void learn(const std::string& path, const std::string& answer, RootNode& root);
+    void learn(const std::string& path, AnswerNode* answer_node, RootNode& root);
     size_t nbr_nodes() const;
     std::string str();
     int parse(const std::string& filename);
@@ -31,9 +36,16 @@ private:
     AnswerNode* _last_answer;
     std::time_t _last_answer_epoch;
     size_t _nbr_nodes;
+friend void parser(Graphmaster& gm, const std::string& filename);
 };
 
 std::stringstream lexer(const std::string& filename);
+void parse_rule(Graphmaster& gm, std::stringstream& ss, RootNode& root);
+AnswerNode* parse_answer(Graphmaster& gm, std::stringstream& ss);
+
+std::string consume(std::stringstream& ss);
+
+std::string peek_token(std::stringstream& ss);
 
 std::string trim(std::string& str);
 bool contains(std::string& str, char c);

@@ -121,6 +121,12 @@ unsigned int& AnswerNode::score()
     return _score;
 }
 
+AnswerNode::~AnswerNode()
+{
+    if(_root!=nullptr)
+        delete _root;
+}
+
 std::string RootNode::label()
 {
     return "ROOT";
