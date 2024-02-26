@@ -33,6 +33,8 @@ private:
     size_t _nbr_nodes;
 };
 
+std::stringstream lexer(const std::string& filename);
+
 std::string trim(std::string& str);
 bool contains(std::string& str, char c);
 

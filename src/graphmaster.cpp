@@ -284,3 +284,52 @@ std::string trim(std::string& str)
         j--;
     return str.substr(i, j-i+1);
 }
+
+std::stringstream lexer(const std::string& filename)
+{
+    std::stringstream ss;
+    std::ifstream file(filename);
+    if(!file)
+    {
+        ss << "Error: could not open file \"" << filename << "\"\n";
+        return ss;
+    }
+
+    char c;
+    std::string buff = "";
+    while(file.get(c))
+    {
+        switch(c){
+            case ' ':
+            case '\n':
+            case '\t':
+                if(buff!=""){
+                    ss << buff << ' ';
+                    buff = "";
+                }
+                break;
+            case '{':
+            case '}':
+            case '(':
+            case ')':
+            case '|':
+                if(buff!=""){
+                    ss << buff << ' ';
+                    buff = "";
+                }
+                ss << c << ' ';
+                break;
+            case '\\':
+                if(file.get(c))
+                    buff += c;
+                break;
+            case '#':
+                while(file.get(c) && c!='\n');
+                break;
+            default:
+                buff += c;
+        }
+    }
+    file.close();
+    return ss;
+}
