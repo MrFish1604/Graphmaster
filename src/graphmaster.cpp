@@ -373,6 +373,8 @@ void parse_rule(Graphmaster& gm, std::stringstream& ss, RootNode& root)
     {
         prompt += token + " ";
         token = consume(ss);
+        if(token == "}")
+            throw std::runtime_error("Parser error: Got '}' before '{'.");
     }
     if(prompt == "")
         throw std::runtime_error("Parser error: expected a prompt before '{', got nothing.");
@@ -436,5 +438,7 @@ std::string consume(std::stringstream& ss)
         throw std::runtime_error("Parser error: unexpected end of file. (consume)");
     std::string token;
     ss >> token;
+    if(token.empty())
+        throw std::runtime_error("Parser error: unexpected end of file. (consume)");
     return token;
 }
