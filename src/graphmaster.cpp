@@ -1,6 +1,7 @@
 #include "graphmaster.h"
 #include <fstream>
 #include <ctime>
+#include <stdexcept>
 
 Graphmaster::Graphmaster(): _last_answer(nullptr), _nbr_nodes(1) {}
 
@@ -23,6 +24,8 @@ AnswerNode& Graphmaster::get_answer(const std::string& path)
     std::stringstream ss(path);
     AnswerNode* rtn = _ask(ss, root, 0, Dict<std::string>());
     _last_answer = rtn;
+    if(rtn == nullptr)
+        throw std::runtime_error("No answer found for the path: \"" + path + "\"\nConsider adding a default answer to avoid this error.");
     _last_answer_epoch = std::time(nullptr);
     return *rtn;
 }
