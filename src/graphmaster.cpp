@@ -344,7 +344,6 @@ std::stringstream lexer(const std::string& filename)
     return ss;
 }
 
-#include <iostream>
 std::string peek_token(std::stringstream& ss)
 {
     if(ss.eof())
@@ -362,13 +361,11 @@ void parser(Graphmaster& gm, const std::string& filename)
     while(ss.good() && !peek_token(ss).empty())
     {
         parse_rule(gm, ss, gm._root);
-        std::cerr << "-------------------\n";
     }
 }
 
 void parse_rule(Graphmaster& gm, std::stringstream& ss, RootNode& root)
 {
-    std::cerr << "Parsing rule\n";
     std::string token;
     token = consume(ss);
     std::string prompt = "";
@@ -386,7 +383,6 @@ void parse_rule(Graphmaster& gm, std::stringstream& ss, RootNode& root)
 
 AnswerNode* parse_answer(Graphmaster& gm, std::stringstream& ss)
 {
-    std::cerr << "Parsing answer\n";
     std::string token;
     AnswerNode* an = new AnswerNode("");
     while((token = peek_token(ss)) != "}")
@@ -436,16 +432,9 @@ AnswerNode* parse_answer(Graphmaster& gm, std::stringstream& ss)
 int ij = 0;
 std::string consume(std::stringstream& ss)
 {
-    std::cerr << (ij++) << "  ";
     if(ss.eof())
         throw std::runtime_error("Parser error: unexpected end of file. (consume)");
     std::string token;
     ss >> token;
-    std::cerr << '\t' << token << "  ";
-    for(int i=0; i<token.size(); i++)
-    {
-        std::cerr << (int)token[i] << " ";
-    }
-    std::cerr << std::endl;
     return token;
 }
