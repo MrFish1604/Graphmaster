@@ -144,7 +144,7 @@ std::string Node::str()
 
 std::string AnswerNode::str()
 {
-    return "{" + _answer + "}";
+    return "{" + _answer + "}:" + std::to_string(_time_limit);
 }
 
 std::string RootNode::str()

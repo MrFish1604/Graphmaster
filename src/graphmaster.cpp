@@ -184,6 +184,11 @@ std::string Graphmaster::_str(ANode& node, const size_t n)
     for(size_t i=0; i<node.nbr_children(); i++)
     {
         rtn += _str(node[i], n+1);
+        if(node[i].is_answer()){
+            AnswerNode& an = static_cast<AnswerNode&>(node[i]);
+            if(an._root!=nullptr)
+                rtn += _str(*an._root, n+2);
+        }
     }
     return rtn;
 }
