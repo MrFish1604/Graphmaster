@@ -401,13 +401,13 @@ std::stringstream lexer(const std::string& filename)
                 break;
             case '\\':
                 if(file.get(c))
-                    buff += c;
+                    buff += LOWER(c);
                 break;
             case '#':
                 while(file.get(c) && c!='\n');
                 break;
             default:
-                buff += c;
+                buff += LOWER(c);
         }
     }
     file.close();
