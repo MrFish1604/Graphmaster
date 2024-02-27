@@ -27,6 +27,7 @@ public:
     bool exists(const std::string& label);
     T& last_star();
     T& get_star();
+    void reset();
     ~Dict();
 private:
     int _next, _nextg;

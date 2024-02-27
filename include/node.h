@@ -70,12 +70,14 @@ public:
     Dict<std::string>& collected();
     unsigned int& score();
     std::string answer();
+    std::string get_exec_cmd();
     int time_limit();
     ~AnswerNode();
 #ifndef TEST
 private:
 #endif
     std::string _answer;
+    std::string _exec;
     unsigned int _score;
     Dict<std::string> _collected;
     RootNode* _root;

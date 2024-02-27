@@ -5,7 +5,7 @@ CFLAGS+=-Iinclude
 bin/libgraphmaster.so: bin/graphmaster.o bin/node.o bin/array.o bin/dict.o
 	g++ --shared $^ -o $@
 
-test: bin/graphmaster.o bin/node.o bin/array.o bin/dict.o bin/test.o 
+test: bin/test.o bin/graphmaster.o bin/node.o bin/array.o bin/dict.o 
 	$(CC) $(CFLAGS) $^ -o $@
 
 bin/graphmaster.o: bin

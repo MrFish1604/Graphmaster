@@ -394,7 +394,7 @@ AnswerNode* parse_answer(Graphmaster& gm, std::stringstream& ss)
             consume(ss);
             token = consume(ss);
             if(token!="(")
-                throw std::runtime_error("Parser error: expected '(' after 'reply', got '"+ token + "'.");
+                throw std::runtime_error("Parser error: expected '(' after '" REPLY "', got '"+ token + "'.");
             token = consume(ss);
             an->_answer += token;
             while(peek_token(ss) != ")")
@@ -410,7 +410,7 @@ AnswerNode* parse_answer(Graphmaster& gm, std::stringstream& ss)
             consume(ss);
             token = consume(ss);
             if(token!="(")
-                throw std::runtime_error("Parser error: expected '(' after 'ttl', got '"+ token + "'.");
+                throw std::runtime_error("Parser error: expected '(' after '" TTL "', got '"+ token + "'.");
             token = consume(ss);
             try{
                 an->_time_limit = std::stoi(token);
@@ -420,8 +420,24 @@ AnswerNode* parse_answer(Graphmaster& gm, std::stringstream& ss)
             }
             catch(std::invalid_argument& e)
             {
-                throw std::runtime_error("Parser error: expected an integer after 'ttl', got '"+ token + "'.");
+                throw std::runtime_error("Parser error: expected an integer after '" TTL "', got '"+ token + "'.");
             }
+            continue;
+        }
+        if(token == EXEC)
+        {
+            consume(ss);
+            token = consume(ss);
+            if(token!="(")
+                throw std::runtime_error("Parser error: expected '(' after '" EXEC "', got '"+ token + "'.");
+            token = consume(ss);
+            an->_exec += token;
+            while(peek_token(ss) != ")")
+            {
+                token = consume(ss);
+                an->_exec += " " + token;
+            }
+            token = consume(ss);
             continue;
         }
         an->_root = new RootNode();

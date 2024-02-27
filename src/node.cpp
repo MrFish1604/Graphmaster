@@ -103,6 +103,29 @@ std::string AnswerNode::answer()
         answer << ' ';
         label >> word;
     }
+    _collected.reset();
+    return answer.str();
+}
+
+std::string AnswerNode::get_exec_cmd()
+{
+    std::stringstream label;
+    label << _exec << ' ';
+    std::stringstream answer;
+    std::string word;
+    label >> word;
+    while(label.good())
+    {
+        if(word[0] == '*')
+            answer << _collected.get_star();
+        else if(word[0] == '$')
+            answer << _collected[word.substr(1, word.length()-1)];
+        else
+            answer << word;
+        answer << ' ';
+        label >> word;
+    }
+    _collected.reset();
     return answer.str();
 }
 
@@ -144,7 +167,7 @@ std::string Node::str()
 
 std::string AnswerNode::str()
 {
-    return "{" + _answer + "}:" + std::to_string(_time_limit);
+    return "{" + _answer + (_exec.empty() ? "" : " [" + _exec + "]") + "}:" + std::to_string(_time_limit);
 }
 
 std::string RootNode::str()

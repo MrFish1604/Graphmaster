@@ -166,6 +166,12 @@ T& Dict<T>::get_star()
 }
 
 template<typename T>
+void Dict<T>::reset()
+{
+    _nextg = 0;
+}
+
+template<typename T>
 Dict<T>::~Dict()
 {
     DictWrapper<T>* tmp;
