@@ -10,6 +10,9 @@
 #define EXEC "exec"
 #define TTL "ttl"
 
+#define CMD_SIZE 32
+#define PIPE_BUFFER_SIZE 256
+
 #define LOWER(c) (c>='A' && c<='Z' ? c+32 : c)
 
 class Graphmaster{
@@ -46,6 +49,8 @@ AnswerNode* parse_answer(Graphmaster& gm, std::stringstream& ss);
 std::string consume(std::stringstream& ss);
 
 std::string peek_token(std::stringstream& ss);
+
+std::string my_exec(const std::string& cmd, int& err);
 
 std::string trim(std::string& str);
 bool contains(std::string& str, char c);

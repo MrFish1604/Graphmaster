@@ -5,17 +5,11 @@
 #include <cstring>
 #include <unistd.h>
 #include <wait.h>
+#include <errno.h>
 
 Graphmaster::Graphmaster(): _last_answer(nullptr), _nbr_nodes(1) {}
 
-#include <iostream>
-#define CMD_SIZE 32
-std::string Graphmaster::ask(const std::string& path)
-{
-    AnswerNode& an = get_answer(path);
-    if(an._exec.empty())
-        return an.answer();
-    std::string cmd = an.get_exec_cmd();
+std::string my_exec(const std::string& cmd, int& err){
     char** argv = new char*[CMD_SIZE];
     char** ptr = argv;
     size_t i = 0;
@@ -36,19 +30,42 @@ std::string Graphmaster::ask(const std::string& path)
     }
     *ptr = NULL;
 
+    int fd[2];
+    pipe(fd);
+
     if(!fork()){
-        execvp(argv[0], argv);
-        exit(0);
+        close(fd[0]);
+        #define STDOUT 1
+        dup2(fd[1], STDOUT);
+        int rtn = execvp(argv[0], argv);
+        close(fd[1]);
+        exit(rtn==-1 ? errno : 0);
     }
-    int status;
-    wait(&status);
-    if(status!=0)
-        return "Error: command failed with " + std::to_string(status) + ".";
+    close(fd[1]);
+    char buffer[PIPE_BUFFER_SIZE];
+    read(fd[0], buffer, PIPE_BUFFER_SIZE);
+    close(fd[0]);
+    wait(&err);
 
     ptr = argv;
     while(*ptr!=NULL)
         free(*(ptr++));
     delete[] argv;
+    return std::string(buffer);
+}
+
+std::string Graphmaster::ask(const std::string& path)
+{
+    AnswerNode& an = get_answer(path);
+    if(an._exec.empty())
+        return an.answer();
+    std::string cmd = an.get_exec_cmd();
+    int err;
+    cmd = my_exec(cmd, err);
+    if(err!=0)
+        return "Error: command failed with " + std::to_string(err) + ".";
+    an._collected.add("cmd", cmd);
+    an._collected.add("errno", std::to_string(err));
     return an.answer();
 }
 
