@@ -1,6 +1,7 @@
 #include "node.h"
 #include <cstdlib>
 #include <sstream>
+#include <cstring>
 
 AbstractNode::AbstractNode(): _parent(nullptr), _children(new Array(0)) {}
 

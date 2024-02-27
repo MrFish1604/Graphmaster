@@ -2,20 +2,61 @@
 #include <fstream>
 #include <ctime>
 #include <stdexcept>
+#include <cstring>
+#include <unistd.h>
+#include <wait.h>
 
 Graphmaster::Graphmaster(): _last_answer(nullptr), _nbr_nodes(1) {}
 
+#include <iostream>
+#define CMD_SIZE 32
 std::string Graphmaster::ask(const std::string& path)
 {
     AnswerNode& an = get_answer(path);
+    if(an._exec.empty())
+        return an.answer();
+    std::string cmd = an.get_exec_cmd();
+    char** argv = new char*[CMD_SIZE];
+    char** ptr = argv;
+    size_t i = 0;
+    while(i<cmd.size())
+    {
+        if(ptr-argv>=CMD_SIZE-1){
+            *ptr = NULL;
+            ptr = argv;
+            while(*ptr!=NULL)
+                free(*(ptr++));
+            throw std::runtime_error("Command too long: '" + cmd + "'");
+        }
+        size_t j = cmd.find_first_of(' ', i);
+        char* c = strndup(cmd.c_str() + i, j-i);
+        *ptr = c;
+        ptr++;
+        i = j+1;
+    }
+    *ptr = NULL;
+
+    if(!fork()){
+        execvp(argv[0], argv);
+        exit(0);
+    }
+    int status;
+    wait(&status);
+    if(status!=0)
+        return "Error: command failed with " + std::to_string(status) + ".";
+
+    ptr = argv;
+    while(*ptr!=NULL)
+        free(*(ptr++));
+    delete[] argv;
     return an.answer();
 }
 
 std::string Graphmaster::ask(const std::string& path, int& score)
 {
-    AnswerNode& an = get_answer(path);
-    score = an.score();
-    return an.answer();
+    std::string rtn = ask(path);
+    score = _last_answer==nullptr ? -1 : _last_answer->score();
+    return rtn;
 }
 
 AnswerNode& Graphmaster::get_answer(const std::string& path)
