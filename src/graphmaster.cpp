@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <wait.h>
 #include <errno.h>
+#include <fcntl.h>
 
 Graphmaster::Graphmaster(): _last_answer(nullptr), _nbr_nodes(1) {}
 
@@ -35,7 +36,18 @@ std::string my_exec(const std::string& cmd, int& err){
 
     if(!fork()){
         close(fd[0]);
+        #ifndef STDOUT
         #define STDOUT 1
+        #endif
+        #ifndef STDERR
+        #define STDERR 2
+        #endif
+        #ifndef DEV_NULL
+        #define DEV_NULL "/dev/null"
+        #endif
+        int null_fd = open(DEV_NULL, O_CREAT);
+        if(null_fd != -1)
+            dup2(null_fd, STDERR);
         dup2(fd[1], STDOUT);
         int rtn = execvp(argv[0], argv);
         close(fd[1]);
