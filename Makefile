@@ -1,5 +1,9 @@
 CC=g++
+ifdef RELEASE
+CFLAGS= -fPIC -Wall -O3
+else
 CFLAGS= -fPIC -Wall -Wextra -pedantic -fdiagnostics-color=always -O0 -g3 -fsanitize=address 
+endif
 CFLAGS+=-Iinclude 
 
 bin/libgraphmaster.so: bin/graphmaster.o bin/node.o bin/array.o bin/dict.o
